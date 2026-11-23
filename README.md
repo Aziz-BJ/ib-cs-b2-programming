@@ -2,7 +2,9 @@
 
 An interactive study site for IB Computer Science B2.1.1 to B2.4.2 (data types through binary search). Bubble sort, selection sort, recursion and file processing are not covered.
 
-## Start
+**Open it: https://aziz-bj.github.io/ib-cs-b2-programming/**  (nothing to install)
+
+## Run it locally
 
 Double-click `start.command`. It opens http://127.0.0.1:8765. If you prefer the terminal, run `python3 -m http.server 8765` in this folder and open that address.
 
