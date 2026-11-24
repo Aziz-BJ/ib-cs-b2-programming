@@ -499,3 +499,39 @@ kbd { font: 500 12px/1 var(--mono); padding: 2px 6px; border-radius: 5px; backgr
 .tt-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 12px; }
 .tt-label .tt-input { margin-top: 5px; border-radius: 10px; }
 .sidebar-foot .tt-link { font-size: 12px; white-space: nowrap; }
+
+/* ---------- flashcards: styled after the IB CS HL flashcard PDF ---------- */
+:root {
+  --fc-blue: #1f4e9c;
+  --fc-head: #e8eef8;
+  --fc-border: #d3dae6;
+  --fc-code: #f1f3f6;
+  --fc-out: #f7f8fb;
+  --fc-text: #1f2633;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fc-blue: #4c7fd6; --fc-head: #1d2a40; --fc-border: #2f3b52; --fc-code: #15181e; --fc-out: #12151b; --fc-text: #e6e9ef; }
+}
+.fc-banner { background: var(--fc-blue); color: #fff; font-weight: 700; font-size: 20px; letter-spacing: -0.01em; padding: 10px 16px; border-radius: 8px; margin: 28px 0 12px; }
+.fc-banner:first-of-type { margin-top: 0; }
+.fc { background: var(--surface); border: 1px solid var(--fc-border); border-radius: 10px; overflow: hidden; margin-bottom: 12px; color: var(--fc-text); }
+.fc-head { display: flex; align-items: baseline; gap: 8px; padding: 10px 14px; background: var(--fc-head); cursor: pointer; user-select: none; }
+.fc.study .fc-head { padding: 18px 20px; }
+.fc-num { font-size: 13px; color: var(--text-2); flex: none; font-variant-numeric: tabular-nums; }
+.fc-q { font-weight: 700; font-size: 16px; line-height: 1.35; flex: 1; }
+.fc.study .fc-q { font-size: 20px; }
+.fc-tag { flex: none; font-size: 11px; font-weight: 600; color: var(--warn); background: var(--warn-bg); padding: 3px 7px; border-radius: 5px; align-self: center; }
+.fc.beyond { opacity: 0.92; }
+.fc-reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 360ms var(--ease); }
+.fc.open .fc-reveal { grid-template-rows: 1fr; }
+.fc-reveal > .fc-body { overflow: hidden; }
+.fc-body { padding: 0 14px; }
+.fc.open .fc-body { padding: 12px 14px 14px; }
+.fc.study .fc-body { padding-left: 20px; padding-right: 20px; }
+.fc-answer { font-size: 15.5px; line-height: 1.55; white-space: pre-line; }
+.fc-code, .fc-out { font: 12.5px/1.5 var(--mono); white-space: pre; overflow-x: auto; margin: 12px 0 0; border-radius: 6px; padding: 10px 12px; }
+.fc-code { background: var(--fc-code); }
+.fc-out-label { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-2); margin: 12px 0 0; }
+.fc-out { background: var(--fc-out); border-left: 3px solid var(--fc-blue); margin-top: 6px; }
+.fc-stage { min-height: 120px; }
+.fc-stage .fc { box-shadow: var(--shadow-lg); border-radius: 14px; }

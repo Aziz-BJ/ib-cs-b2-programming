@@ -2,7 +2,7 @@
 // settings dialog and kept only in this browser's localStorage; it is sent only to openrouter.ai.
 window.Tutor = (() => {
   const KEY = 'b2-tutor';
-  const DEFAULT_MODEL = 'anthropic/claude-haiku-5.5';
+  const DEFAULT_MODEL = 'deepseek/deepseek-v4.1-flash';
   const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
   let cfg = load();
   const save = () => localStorage.setItem(KEY, JSON.stringify(cfg));

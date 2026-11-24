@@ -93,7 +93,7 @@
           next ? h('a', { class: 'btn primary', href: `#/t/${next.id}${Store.isRead(next.id) ? '/practice' : ''}` }, last ? `Continue ${next.code}` : `Start with ${next.code}`, ' →') : null)),
       h('div', { class: 'tiles' },
         tile('#/paper', '✎', 'Practice paper', 'Timed, mixed, exam-style'),
-        tile('#/cards', '❏', 'Flashcards', `${topics.reduce((n, t) => n + t.terms.length, 0)} key terms`),
+        tile('#/cards', '❏', 'Flashcards', `${(window.B2.flashcards || []).filter(c => c.scope).length} cards for this exam`),
         tile('#/review', '↺', 'Mistakes to redo', reviewCount() ? `${reviewCount()} questions` : 'Nothing yet')),
       ...sections.map(s => h('div', { class: 'section-block' },
         h('div', { class: 'section-head' }, h('h3', null, s.name)),
@@ -276,53 +276,91 @@
     p.append(h('div', { class: 'btn-row', style: 'margin-top:24px' }, h('a', { class: 'btn primary', href: '#/paper' }, 'New paper'), h('a', { class: 'btn', href: '#/review' }, 'Redo mistakes')));
   }
 
-  // ---------- flashcards ----------
-  function viewCards(sectionFilter) {
+  // ---------- flashcards (styled after IB_CS_HL_Flashcards.pdf) ----------
+  const CARDS = window.B2.flashcards || [];
+  const CARD_SECTIONS = window.B2.sections || [];
+  function fcCard(c, { open = true, onToggle } = {}) {
+    const body = h('div', { class: 'fc-body' },
+      h('div', { class: 'fc-answer' }, c.a),
+      c.code ? h('pre', { class: 'fc-code' }, c.code) : null,
+      c.output ? h('div', { class: 'fc-out-label' }, 'Output') : null,
+      c.output ? h('pre', { class: 'fc-out' }, c.output) : null);
+    const card = h('article', { class: `fc${open ? ' open' : ''}${c.scope ? '' : ' beyond'}` },
+      h('header', { class: 'fc-head', onclick: () => onToggle && onToggle() },
+        h('span', { class: 'fc-num' }, `#${c.n}`), h('span', { class: 'fc-q' }, c.q),
+        c.scope ? null : h('span', { class: 'fc-tag' }, 'Not on this exam')),
+      h('div', { class: 'fc-reveal' }, body));
+    return card;
+  }
+  function viewCards(filter = Store.get('cardFilter') || 'scope', mode = Store.get('cardMode') || 'study') {
+    Store.set('cardFilter', filter); Store.set('cardMode', mode);
     const p = page();
-    const filter = sectionFilter || 'all';
-    let deck = [];
-    for (const t of ordered) if (filter === 'all' || t.section === filter) for (const term of t.terms) deck.push({ ...term, code: t.code });
-    deck = deck.sort(() => Math.random() - 0.5);
+    const pick = c => filter === 'all' ? true : filter === 'scope' ? c.scope : c.section === filter;
+    const pool = CARDS.filter(pick);
+    p.append(h('div', { class: 'eyebrow' }, 'IB Computer Science HL'), h('h1', null, 'Flashcards'),
+      h('p', { class: 'lede' }, 'Read the question, answer it out loud, then reveal. Code cards show the program and its exact output.'));
+    const sel = h('select', { class: 'btn', style: 'padding-right:28px', onchange: () => viewCards(sel.value, mode) },
+      h('option', { value: 'scope', selected: filter === 'scope' }, `Exam scope (${CARDS.filter(c => c.scope).length})`),
+      CARD_SECTIONS.map(s => h('option', { value: s, selected: s === filter }, `${s} (${CARDS.filter(c => c.section === s).length})`)),
+      h('option', { value: 'all', selected: filter === 'all' }, `All cards (${CARDS.length})`));
+    const seg = h('div', { class: 'seg', style: 'margin:0' },
+      h('button', { class: mode === 'study' ? 'on' : '', onclick: () => viewCards(filter, 'study') }, 'Study'),
+      h('button', { class: mode === 'browse' ? 'on' : '', onclick: () => viewCards(filter, 'browse') }, 'Browse'));
+    p.append(h('div', { class: 'btn-row', style: 'margin-bottom:20px' }, sel, h('span', { class: 'spacer' }), seg));
+
+    if (mode === 'browse') {
+      let lastSection = null;
+      for (const c of pool) {
+        if (c.section !== lastSection) { p.append(h('div', { class: 'fc-banner' }, c.section)); lastSection = c.section; }
+        const card = fcCard(c, { open: false, onToggle: () => card.classList.toggle('open') });
+        p.append(card);
+      }
+      p.append(h('p', { class: 'muted small', style: 'text-align:center;margin-top:24px' }, 'Click a question to show its answer.'));
+      return;
+    }
+
+    let deck = pool.slice().sort(() => Math.random() - 0.5);
     const total = deck.length;
-    let known = 0;
-    p.append(h('div', { class: 'eyebrow' }, 'Definitions'), h('h1', null, 'Flashcards'),
-      h('p', { class: 'lede' }, 'Definitions are easy marks. Say the answer out loud before you flip.'));
-    const sel = h('select', { class: 'btn', style: 'padding-right:28px', onchange: () => viewCards(sel.value) },
-      h('option', { value: 'all' }, 'All topics'), sections.map(s => h('option', { value: s.name, selected: s.name === filter }, s.name)));
+    let known = 0, revealed = false;
     const count = h('span', { class: 'muted small' });
     const bar = h('div');
-    p.append(h('div', { class: 'btn-row' }, sel, h('span', { class: 'spacer' }), count), h('div', { class: 'progress-line' }, bar));
-    const stage = h('div', { class: 'flash-stage' });
+    const stage = h('div', { class: 'fc-stage' });
     const actions = h('div', { class: 'flash-actions' });
-    p.append(stage, actions, h('p', { class: 'muted small', style: 'text-align:center;margin-top:18px' }, h('kbd', null, 'Space'), ' flip · ', h('kbd', null, '1'), ' again · ', h('kbd', null, '2'), ' got it'));
-    let card, flipped = false;
+    p.append(h('div', { class: 'btn-row' }, h('span', { class: 'muted small', id: 'fc-section' }), h('span', { class: 'spacer' }), count),
+      h('div', { class: 'progress-line', style: 'margin-bottom:20px' }, bar), stage, actions,
+      h('p', { class: 'muted small', style: 'text-align:center;margin-top:18px' }, h('kbd', null, 'Space'), ' reveal · ', h('kbd', null, '1'), ' again · ', h('kbd', null, '2'), ' got it'));
     const draw = () => {
       count.textContent = `${known} of ${total} known`;
       bar.style.width = `${total ? 100 * known / total : 0}%`;
       if (!deck.length) {
-        stage.replaceChildren(h('div', { class: 'card done-card' }, h('div', { class: 'big' }, 'Done'), h('div', { class: 'muted' }, `All ${total} terms reviewed.`)));
-        actions.replaceChildren(h('button', { class: 'btn primary', onclick: () => viewCards(filter) }, 'Shuffle and restart'));
+        stage.replaceChildren(h('div', { class: 'card done-card' }, h('div', { class: 'big' }, 'Done'), h('div', { class: 'muted' }, `All ${total} cards reviewed.`)));
+        actions.replaceChildren(h('button', { class: 'btn primary', onclick: () => viewCards(filter, mode) }, 'Shuffle and restart'));
         cardKeys = null;
         return;
       }
       const c = deck[0];
-      flipped = false;
-      card = h('div', { class: 'flash', role: 'button', tabindex: '0', 'aria-label': 'Flip card', onclick: flip },
-        h('div', { class: 'face front' }, h('span', { class: 'f-meta' }, c.code), h('div', { class: 'f-term', html: c.term }), h('span', { class: 'f-hint' }, 'Click to reveal')),
-        h('div', { class: 'face back' }, h('span', { class: 'f-meta' }, c.code), h('div', { class: 'f-def', html: c.def })));
+      revealed = false;
+      document.getElementById('fc-section').textContent = c.section;
+      const card = fcCard(c, { open: false, onToggle: reveal });
+      card.classList.add('page-enter', 'study');
       stage.replaceChildren(card);
+      actions.replaceChildren(h('button', { class: 'btn primary lg', onclick: reveal }, 'Reveal answer'));
+    };
+    const reveal = () => {
+      if (revealed || !deck.length) return;
+      revealed = true;
+      stage.querySelector('.fc').classList.add('open');
       actions.replaceChildren(
         h('button', { class: 'btn lg', onclick: again }, 'Again'),
         h('button', { class: 'btn primary lg', onclick: got }, 'Got it'));
     };
-    const flip = () => { flipped = !flipped; card.classList.toggle('flipped', flipped); };
     const again = () => { const c = deck.shift(); deck.splice(Math.min(deck.length, 3 + Math.floor(Math.random() * 4)), 0, c); draw(); };
     const got = () => { deck.shift(); known++; draw(); };
     cardKeys = e => {
       if (e.target.closest('select, input, textarea')) return;
-      if (e.key === ' ') { e.preventDefault(); flip(); }
-      if (e.key === '1') again();
-      if (e.key === '2') got();
+      if (e.key === ' ') { e.preventDefault(); revealed ? null : reveal(); }
+      if (revealed && e.key === '1') again();
+      if (revealed && e.key === '2') got();
     };
     draw();
   }
