@@ -33,12 +33,13 @@ window.Structure = (() => {
     const rows = [];
     const stack = []; // open blocks: { indent, kind }
     let loopSeen = false;
+    let fnName = '';
     const all = src.replace(/\t/g, '    ').split('\n');
     const hasDef = all.some(l => /^\s*def\s/.test(l));
     // Is there a loop later in the current function (or program, if no functions)?
     const loopAhead = from => {
       for (let k = from + 1; k < all.length; k++) {
-        if (/^def\s/.test(all[k])) return false;
+        if (/^\s*def\s/.test(all[k])) return false;
         if (/^\s*(for|while)\b/.test(all[k])) return true;
       }
       return false;
@@ -52,9 +53,12 @@ window.Structure = (() => {
       const inLoop = stack.some(b => b.kind === 'loop');
       let shape = t, kind = 'other', note = '', opens = null, m;
 
-      if ((m = t.match(/^def\s+(\w+)\s*\((.*)\)\s*:$/))) {
-        kind = 'header'; opens = 'def'; loopSeen = false;
-        note = 'Copy the name and parameters exactly from the question.';
+      if ((m = t.match(/^class\s+(\w+)/))) {
+        kind = 'header'; opens = 'class';
+        note = 'Class: the blueprint. Its methods take self as the first parameter.';
+      } else if ((m = t.match(/^def\s+(\w+)\s*\((.*)\)\s*:$/))) {
+        kind = 'header'; opens = 'def'; loopSeen = false; fnName = m[1];
+        note = m[1] === '__init__' ? 'Constructor: runs when an object is created and sets its attributes.' : 'Copy the name and parameters exactly from the question.';
       } else if ((m = t.match(/^for\s+(.+?)\s+in\s+(.+):$/))) {
         kind = 'loop'; opens = 'loop'; loopSeen = true;
         shape = `for ___ in ___:`;
@@ -103,11 +107,19 @@ window.Structure = (() => {
             const swap = vars.length === 2 && rhs.replace(/\s/g, '') === `${vars[1]},${vars[0]}`.replace(/\s/g, '');
             kind = inLoop ? 'update' : loopSeen ? 'after' : 'init';
             note = swap ? 'Swap the two values in one step.' : 'Set several variables at once.';
+          } else if (fnName === '__init__') {
+            kind = 'init'; note = 'Give the new object\'s attribute its starting value.';
+          } else if (/^[A-Z]\w*\s*\(/.test(rhs.trim()) && !inLoop) {
+            kind = 'init'; note = 'Create a new object (e.g. a new node).';
+          } else if (!inLoop && /\.(next|prev|left|right|head|tail|root)$/.test(target)) {
+            kind = 'update'; note = 'Re-link a pointer (order matters: link the new node before breaking the old link).';
           } else if (inLoop) {
             kind = 'update';
-            note = /\[/.test(target) ? 'Change one element.' : op !== '=' ? `Accumulate into ${target}.` : `Change ${target} for the next step.`;
+            note = /\.next$/.test(rhs.trim()) && !/\./.test(target) ? 'Move along to the next node.'
+              : /\.(next|prev|left|right)$/.test(target) ? 'Re-link a pointer.'
+              : /\[/.test(target) ? 'Change one element.' : op !== '=' ? `Accumulate into ${target}.` : `Change ${target} for the next step.`;
           } else if (stack.some(b => b.kind === 'if' || b.kind === 'try')) {
-            kind = 'update'; note = /\[/.test(target) ? 'Change one element.' : `Change ${target}.`;
+            kind = 'update'; note = /\.(next|prev|left|right|head|tail|root)$/.test(target) ? 'Re-link a pointer.' : /\[/.test(target) ? 'Change one element.' : `Change ${target}.`;
           } else if (loopSeen) {
             kind = 'after'; note = 'Uses the values the loop built up.';
           } else if (hasDef && !stack.some(b => b.kind === 'def')) {

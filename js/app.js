@@ -1,8 +1,13 @@
 // Router and views: home, topic (learn / practice), practice paper, flashcards, review.
 (() => {
+  // Not on the test (kept in content/ in case the scope changes back).
+  const HIDDEN_TOPICS = ['b2-1-3', 'b2-2-1'];
+  const HIDDEN_EXERCISES = ['exam-mixed/e13'];
+  window.B2.topics = window.B2.topics.filter(t => !HIDDEN_TOPICS.includes(t.id));
+  for (const t of window.B2.topics) t.exercises = t.exercises.filter(e => !HIDDEN_EXERCISES.includes(`${t.id}/${e.id}`));
   const topics = window.B2.topics;
   const byId = Object.fromEntries(topics.map(t => [t.id, t]));
-  const SECTION_ORDER = ['B2.1 Programming fundamentals', 'B2.2 Data structures', 'B2.3 Programming constructs', 'B2.4 Programming algorithms', 'Exam practice'];
+  const SECTION_ORDER = ['B2.1 Programming fundamentals', 'B2.2 Data structures', 'B2.3 Programming constructs', 'B2.4 Programming algorithms', 'B4.1 Abstract data types', 'Exam practice'];
   const sections = SECTION_ORDER.map(name => ({ name, topics: topics.filter(t => t.section === name) })).filter(s => s.topics.length);
   const ordered = sections.flatMap(s => s.topics);
   const main = document.getElementById('main');
@@ -86,7 +91,7 @@
     p.append(
       h('div', { class: 'eyebrow' }, 'IB Computer Science · B2 Programming'),
       h('h1', null, 'Learn to code it, not just read it.'),
-      h('p', { class: 'lede' }, 'Everything on your exam, from data types to bubble sort. Read a short lesson, run the examples, then answer IB-style questions that check your code for you.'),
+      h('p', { class: 'lede' }, 'Everything on your test, from data types to linked lists, trees and sets. Read a short lesson, run the examples, then answer IB-style questions that check your code for you.'),
       h('div', { class: 'card hero-card' }, big,
         h('div', null,
           h('div', { style: 'font-weight:600;font-size:17px' }, `${o.score} of ${o.max} marks earned`),
@@ -106,7 +111,7 @@
             h('span', { class: 'meta' }, tp.done ? `${tp.score}/${tp.max}` : `${t.minutes || 20} min`),
             ring(tp.frac, 22, 3));
         })))),
-      h('p', { class: 'muted small', style: 'margin-top:40px' }, 'Not on this exam: recursion and file processing. Your progress is saved in this browser. ',
+      h('p', { class: 'muted small', style: 'margin-top:40px' }, 'Not on this test: exception handling, static vs dynamic structures, selection sort, recursion, file processing, and maps. Your progress is saved in this browser. ',
         h('a', { href: '#/', onclick: e => { e.preventDefault(); if (confirm('Clear all your saved progress and answers?')) { Store.reset(); route(); } } }, 'Reset progress')));
   }
   const tile = (href, icon, title, sub) => h('a', { class: 'tile', href }, h('span', { class: 't-icon' }, icon), h('span', { class: 't-title' }, title), h('span', { class: 't-sub' }, sub));

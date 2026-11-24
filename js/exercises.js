@@ -182,7 +182,10 @@ function codeView(code) {
 // ---------- normalisers ----------
 const normText = s => s.replace(/\r/g, '').split('\n').map(l => l.replace(/\s+$/, '')).join('\n').replace(/^\n+|\n+$/g, '');
 const normCell = s => {
-  let v = String(s).trim().toLowerCase().replace(/\s+/g, '').replace(/["']/g, '');
+  let v = String(s).replace(/->|→|=>/g, ' ');
+  // Paths like "40, 25, 30" or "40 → 25 → 30": commas are separators unless the cell is a list.
+  if (!/[\[\]{}()]/.test(v)) v = v.replace(/,/g, ' ');
+  v = v.trim().toLowerCase().replace(/\s+/g, '').replace(/["']/g, '');
   if (v === '-' || v === '—') v = '';
   return v;
 };
@@ -316,7 +319,7 @@ const RENDER = {
     const cellOk = (given, r, c) => {
       const g = normCell(given), w = normCell(ex.rows[r][c]);
       if (g === w) return true;
-      if (outputCol(c)) return false;
+      if (ex.strict || outputCol(c)) return false;
       const prev = lastAbove(r, c);
       if (g === '' && w === prev) return true;       // left blank, value unchanged
       if (w === '' && prev !== '' && g === prev) return true; // repeated the unchanged value

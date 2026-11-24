@@ -255,14 +255,14 @@ window.B2.flashcards = [
   "a": "Name the exception (a bare except hides bugs), keep the try block short, handle it (do not hide it). finally ALWAYS runs: no problem, caught problem, uncaught problem. Read the last line of the traceback to find the name.",
   "code": "backup_menu = [\"Latte\", \"Tea\"]\nmenu_file = None\ntry:\n    menu_file = open(\"menu_does_not_exist.txt\")\n    menu = menu_file.read()\nexcept FileNotFoundError:\n    print(\"menu.txt not found: using backup\")\n    menu = backup_menu\nfinally:\n    print(\"Menu loading finished\")      # always runs\n    if menu_file is not None:\n        menu_file.close()\nprint(menu)",
   "output": "menu.txt not found: using backup\nMenu loading finished\n['Latte', 'Tea']",
-  "scope": true
+  "scope": false
  },
  {
   "n": 31,
   "section": "B2.1 Fundamentals",
   "q": "Common exceptions (table)",
   "a": "ValueError: right type, unusable value: float(\"two pounds\")\nZeroDivisionError: divide by zero\nTypeError: operation on wrong type: \"Total: \" + 7.8\nIndexError: index does not exist: code[14] on 14 characters\nFileNotFoundError: file not there\nNameError: variable used before it exists",
-  "scope": true
+  "scope": false
  },
  {
   "n": 32,
@@ -278,7 +278,7 @@ window.B2.flashcards = [
   "a": "Loop until the input can be converted; ValueError tells the user and asks again.",
   "code": "inputs = iter([\"two pounds\", \"2.50\"])      # simulated typing\nwhile True:\n    try:\n        price = float(next(inputs))\n        break\n    except ValueError:\n        print(\"Numbers only, for example 2.50\")\nprint(\"Price accepted:\", price)",
   "output": "Numbers only, for example 2.50\nPrice accepted: 2.5",
-  "scope": true
+  "scope": false
  },
  {
   "n": 34,
@@ -287,14 +287,14 @@ window.B2.flashcards = [
   "a": "raise lets you signal your own error for a value that is valid Python but impossible in real life.",
   "code": "total, people = 12.0, 0\ntry:\n    each = total / people\nexcept ZeroDivisionError:\n    print(\"You cannot split a bill between 0 people.\")\ndef total_cost(price, quantity):\n    if quantity < 0:\n        raise ValueError(\"Quantity cannot be negative\")\n    return price * quantity\ntry:\n    print(total_cost(2.5, -3))\nexcept ValueError as e:\n    print(\"Error:\", e)",
   "output": "You cannot split a bill between 0 people.\nError: Quantity cannot be negative",
-  "scope": true
+  "scope": false
  },
  {
   "n": 35,
   "section": "B2.2 Data structures",
   "q": "Static vs dynamic data structures",
   "a": "Static: size fixed at creation; memory allocated in advance (one contiguous block); direct access by index; wastes memory when not full; overflows when full.\nDynamic: size changes at run time; memory allocated as needed and released; linked structures must be traversed; spare capacity or links cost extra; can grow until memory runs out.\nIn a Compare answer, pair every static point with its dynamic partner.",
-  "scope": true
+  "scope": false
  },
  {
   "n": 36,
@@ -303,7 +303,7 @@ window.B2.flashcards = [
   "a": "Python has no static array, so the slides model one with a fixed CAPACITY and a count. Adding when full = overflow; removing when empty = underflow.",
   "code": "CAPACITY = 8\nshelf = [None] * CAPACITY\ncount = 0\ndef add_to_shelf(item):\n    global count\n    if count == CAPACITY:\n        print(\"Overflow: the shelf is full\")\n    else:\n        shelf[count] = item\n        count = count + 1\ndef remove_from_shelf():\n    global count\n    if count == 0:\n        print(\"Underflow: the shelf is empty\")\n    else:\n        count = count - 1\n        shelf[count] = None",
   "output": "(adding a 9th pastry prints) Overflow: the shelf is full",
-  "scope": true
+  "scope": false
  },
  {
   "n": 37,
@@ -312,7 +312,7 @@ window.B2.flashcards = [
   "a": "1 allocate a new, larger block; 2 copy every item across; 3 release the old block. Over- allocate (double) to resize less often. Worked example: 10 items, capacity 2 -> 4 -> 8 -> 16: 3 resizes, 2 + 4 + 8 = 14 items copied, 6 of 16 slots unused.",
   "code": "cap, n, copied = 2, 0, 0\nfor i in range(10):\n    if n == cap:\n        copied += n; cap *= 2\n    n += 1\nprint(\"capacity\", cap, \"copied\", copied, \"unused\", cap - n)",
   "output": "capacity 16 copied 14 unused 6",
-  "scope": true
+  "scope": false
  },
  {
   "n": 38,
@@ -889,14 +889,14 @@ window.B2.flashcards = [
   "a": "List = sorted part + unsorted part. Scan the unsorted part for the smallest item and swap it into the first unsorted position. ONE swap per pass. Always O(n²) (best case too), space O(1). Fewer swaps can be faster where writes are costly.",
   "code": "for i in range(n - 1):\n    m = i\n    for j in range(i + 1, n):\n        if a[j] < a[m]:\n            m = j\n    a[m], a[i] = a[i], a[m]",
   "output": "[14, 3, 9, 1, 7] -> 1 3 9 14 7 -> 1 3 9 14 7 -> 1 3 7 14 9 -> 1 3 7 9 14",
-  "scope": true
+  "scope": false
  },
  {
   "n": 108,
   "section": "B2.4 Algorithms",
   "q": "Bubble vs selection sort",
   "a": "Bubble: compare neighbours; many swaps; best case O(n) if optimised; worst O(n²); space O(1).\nSelection: find the minimum; one swap per pass; always O(n²); space O(1).\nSame Big O does not mean same speed.",
-  "scope": true
+  "scope": false
  },
  {
   "n": 109,
@@ -1015,21 +1015,21 @@ window.B2.flashcards = [
   "section": "B4.1 ADTs and linked lists",
   "q": "Abstract data type (ADT)",
   "a": "A conceptual description of a data structure and its operations. It defines WHAT the structure can do, not HOW (a blueprint describes rooms, not materials). Components: the data it holds and the operations on it.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 124,
   "section": "B4.1 ADTs and linked lists",
   "q": "ADT vs data structure; interface vs implementation",
   "a": "ADT = abstract view (what): List, Stack, Queue, Set. Data structure = concrete\nimplementation (how): array, linked list, dynamic array, hash table. One ADT can have several implementations (a stack via a list or via linked nodes). Interface: the public operations (push, pop, peek). Implementation: the hidden code and storage.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 125,
   "section": "B4.1 ADTs and linked lists",
   "q": "Purpose of ADTs",
   "a": "Modularity: break complex problems into manageable units.\nReusability: used in different parts or programs.\nInformation hiding (encapsulation): internals hidden, users only use operations -> easier to maintain, less error-prone.\nFlexibility: implementation can change without affecting code that uses it.\nAlgorithm design/teamwork: design the logic first; abstract design and implementation done independently.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 126,
@@ -1038,21 +1038,21 @@ window.B2.flashcards = [
   "a": "The user code only calls push/pop/peek/is_empty; the list is hidden. Encapsulation: data and operations bundled in one class.",
   "code": "class Stack:\n    def __init__(self):\n        self._items = []           # hidden implementation (a list)\n    def push(self, x): self._items.append(x)\n    def pop(self):     return self._items.pop()\n    def peek(self):    return self._items[-1]\n    def is_empty(self): return len(self._items) == 0\ns = Stack()\ns.push(\"Song A\")\ns.push(\"Song B\")\nprint(s.pop())",
   "output": "Song B",
-  "scope": false
+  "scope": true
  },
  {
   "n": 127,
   "section": "B4.1 ADTs and linked lists",
   "q": "Arrays vs linked lists (evaluate)",
   "a": "Array: O(1) access by index; cache-friendly (contiguous); but fixed size, insert/delete O(n) (shifting), wasted space if not full.\nLinked list: dynamic size; O(1) insert/delete at the head (or a known node); memory only as needed; but no direct access (O(n)), extra memory for pointers, no binary search, heap exhaustion if it keeps growing.\nUse a linked list when size is unknown/changes a lot with many insertions/deletions; an array for fast index access, binary search, or tight memory.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 128,
   "section": "B4.1 ADTs and linked lists",
   "q": "Singly linked list (SLL), node, head, NULL",
   "a": "A dynamic structure of nodes linked together, not necessarily contiguous. Each node = data + a next pointer. The Head pointer stores the address of the first node; the last node's Next is NULL (None). Empty list: Head is NULL. Traversal is forward only; deleting needs the previous node.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 129,
@@ -1060,7 +1060,7 @@ window.B2.flashcards = [
   "q": "Node class and LinkedList class (code)",
   "a": "None = NULL. Empty list: head is None.",
   "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None        # the Next pointer (None = NULL)\nclass LinkedList:\n    def __init__(self):\n        self.head = None        # empty list: Head is NULL",
-  "scope": false
+  "scope": true
  },
  {
   "n": 130,
@@ -1068,14 +1068,14 @@ window.B2.flashcards = [
   "q": "SLL traversal and search (code)",
   "a": "Current = Head; while Current is not NULL: process it, Current = Current.Next. Search: compare each node's data; reaching NULL = not found. You cannot binary search a linked list (no direct access to the middle).",
   "code": "    def traverse(self):\n        items = []\n        current = self.head\n        while current is not None:\n            items.append(current.data)\n            current = current.next\n        return items\n    def search(self, value):\n        current = self.head\n        position = 0\n        while current is not None:\n            if current.data == value:\n                return position\n            current = current.next\n            position = position + 1\n        return -1",
-  "scope": false
+  "scope": true
  },
  {
   "n": 131,
   "section": "B4.1 ADTs and linked lists",
   "q": "SLL insertion: head, tail, middle, empty",
   "a": "Head: new.Next = Head, then Head = new.\nTail: traverse to the last node, last.Next = new.\nMiddle: traverse to NodeBefore; new.Next = NodeBefore.Next FIRST; then NodeBefore.Next = new (the other order loses the rest of the list).\nEmpty list: Head = new.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 132,
@@ -1083,14 +1083,14 @@ window.B2.flashcards = [
   "q": "SLL insert at head, tail, and after a node (code)",
   "a": "Order matters for a middle insert: step 1 new.next = current.next, step 2 current.next = new.",
   "code": "    def insert_head(self, data):\n        new = Node(data)\n        new.next = self.head        # new points to the old first node\n        self.head = new             # Head now points to the new node\n    def insert_tail(self, data):\n        new = Node(data)\n        if self.head is None:       # empty list\n            self.head = new\n            return\n        current = self.head\n        while current.next is not None:   # traverse to the last node\n            current = current.next\n        current.next = new\n    def insert_after(self, target, data):\n        current = self.head\n        while current is not None and current.data != target:\n            current = current.next\n        if current is None:\n            return False                  # target not found\n        new = Node(data)\n        new.next = current.next           # step 1 (do this FIRST)\n        current.next = new                # step 2\n        return True",
-  "scope": false
+  "scope": true
  },
  {
   "n": 133,
   "section": "B4.1 ADTs and linked lists",
   "q": "SLL deletion cases",
   "a": "Head: Head = Head.Next.\nMiddle: NodeBefore.Next = NodeBefore.Next.Next (bypass; the node is orphaned and garbage collected).\nTail: node before the tail, set its Next = NULL.\nOnly node: Head = Head.Next = NULL (list empty).\nValue not in list: Current reaches NULL, no deletion.\nYou MUST find and change the Next of the PREVIOUS node: a limitation of SLLs.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 134,
@@ -1098,7 +1098,7 @@ window.B2.flashcards = [
   "q": "SLL delete (code)",
   "a": "Find the node BEFORE the one to delete, then bypass it.",
   "code": "    def delete(self, value):\n        if self.head is None:                  # empty list\n            return False\n        if self.head.data == value:            # delete the head\n            self.head = self.head.next\n            return True\n        before = self.head\n        while before.next is not None and before.next.data != value:\n            before = before.next               # find the node BEFORE\n        if before.next is None:\n            return False                       # value not in the list\n        before.next = before.next.next         # bypass the node\n        return True",
-  "scope": false
+  "scope": true
  },
  {
   "n": 135,
@@ -1107,14 +1107,14 @@ window.B2.flashcards = [
   "a": "Insert at head, tail, middle, then search and delete head, middle, tail.",
   "code": "ll = LinkedList()\nll.insert_head(10); ll.insert_head(5)    # 5 -> 10\nll.insert_tail(30)                        # 5 -> 10 -> 30\nll.insert_after(10, 20)                   # 5 -> 10 -> 20 -> 30\nprint(ll.traverse())\nprint(ll.search(20), ll.search(99))\nll.delete(5); print(ll.traverse())\nll.delete(20); print(ll.traverse())\nll.delete(30); print(ll.traverse())\nprint(ll.delete(99))\nll.delete(10); print(ll.traverse(), ll.head)",
   "output": "[5, 10, 20, 30]\n2 -1\n[10, 20, 30]\n[10, 30]\n[10]\nFalse\n[] None",
-  "scope": false
+  "scope": true
  },
  {
   "n": 136,
   "section": "B4.1 ADTs and linked lists",
   "q": "Doubly linked list (DLL)",
   "a": "Node = Prev + Data + Next. Traversal in both directions (Head -> Next; Tail -> Prev). First node's Prev is NULL; last node's Next is NULL. Insert in the middle: FOUR pointer changes. Delete a node given a pointer to it: TWO pointer changes (much simpler than SLL). Backward traversal is easy; no extra traversal to find the previous node. Cost: 2 pointers per element.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 137,
@@ -1123,14 +1123,14 @@ window.B2.flashcards = [
   "a": "Insert: new.next = after, after.prev = new, new.prev = node, node.next = new. Delete: node before -> node after, node after -> node before; update head/tail at the ends.",
   "code": "class DNode:\n    def __init__(self, data):\n        self.data = data\n        self.prev = None\n        self.next = None\n    # inside DoublyLinkedList:\n    def insert_after(self, node, data):       # FOUR pointer changes\n        new = DNode(data)\n        after = node.next\n        new.next = after                       # 1\n        if after is not None:\n            after.prev = new                   # 2\n        else:\n            self.tail = new\n        new.prev = node                        # 3\n        node.next = new                        # 4\n    def delete_node(self, node):               # TWO pointer changes\n        if node.prev is not None:\n            node.prev.next = node.next\n        else:\n            self.head = node.next              # deleting the head\n        if node.next is not None:\n            node.next.prev = node.prev\n        else:\n            self.tail = node.prev              # deleting the tail",
   "output": "A, C, E -> insert B after A: ['A','B','C','E'] ['E','C','B','A']; delete C: ['A','B','E']\n['E','B','A']",
-  "scope": false
+  "scope": true
  },
  {
   "n": 138,
   "section": "B4.1 ADTs and linked lists",
   "q": "Circular linked list (CLL): advantages and disadvantages",
   "a": "The last node's pointer wraps round to the first node: no NULL end. CSLL: Data + Next; CDLL: Data + Prev + Next (last.Next -> Head, Head.Prev -> last).\nAdvantages: traverse the whole list from any node; easy to get from the end to the start; good for cycling (round-robin scheduling, queues); no NULL check when advancing. Disadvantages: traversal needs another way to detect a full lap (compare Current with StartNode); true start/end may need special handling; insert/delete must keep last -> head correct.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 139,
@@ -1139,7 +1139,7 @@ window.B2.flashcards = [
   "a": "There is no None, so stop when you get back to where you started.",
   "code": "class Node:\n    def __init__(self, data): self.data = data; self.next = None\na, b, c = Node(5), Node(10), Node(15)\na.next, b.next, c.next = b, c, a        # c points back to a\nhead = a\ncurrent = head\nwhile True:\n    print(current.data, end=\" \")\n    current = current.next\n    if current is head:\n        break",
   "output": "5 10 15",
-  "scope": false
+  "scope": true
  },
  {
   "n": 140,
@@ -1148,21 +1148,21 @@ window.B2.flashcards = [
   "a": "Keep the TAIL; tail.next is the head. One node points to itself.",
   "code": "class CircularLinkedList:\n    def __init__(self):\n        self.tail = None\n    def insert_tail(self, data):\n        new = Node(data)\n        if self.tail is None:\n            new.next = new                  # one node points to itself\n        else:\n            new.next = self.tail.next        # new -> head\n            self.tail.next = new             # old tail -> new\n        self.tail = new\n    def traverse(self):\n        out = []\n        if self.tail is None:\n            return out\n        cur = self.tail.next                 # head\n        while True:\n            out.append(cur.data)\n            if cur is self.tail:\n                break\n            cur = cur.next\n        return out",
   "output": "['P1', 'P2', 'P3'] ; after delete P2: ['P1', 'P3'] ; round-robin: P1 P3 P1 P3 P1",
-  "scope": false
+  "scope": true
  },
  {
   "n": 141,
   "section": "B4.1 ADTs and linked lists",
   "q": "Linked lists: time complexity vs array",
   "a": "Access by index: array O(1); SLL/DLL/CLL O(n).\nSearch by value: array O(n) (O(log n) binary if sorted); lists O(n).\nInsert at head: array O(n); lists O(1).\nInsert at tail: array O(n) if resize, O(1) if space; SLL O(n); DLL O(1) with Tail; CLL O(1) with pointer to last.\nInsert in the middle: O(n) to find, pointer changes O(1).\nDelete at head: array O(n); lists O(1).\nDelete middle/tail: SLL O(n); DLL O(1) if you hold a pointer.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 142,
   "section": "B4.1 ADTs and linked lists",
   "q": "Memory use: array vs linked lists",
   "a": "Array: data only, no overhead (efficient if size is known; may waste space or need costly resizing).\nSLL/CSLL: data + 1 pointer per element.\nDLL/CDLL: data + 2 pointers per element.\nPointers take memory themselves (e.g. 8 bytes on 64-bit): significant overhead for small data types.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 143,
@@ -1171,21 +1171,21 @@ window.B2.flashcards = [
   "a": "Push/pop at the head: O(1). Applications of linked lists: stack, queue (enqueue at the tail with a Tail pointer, dequeue at the head), playlist/browser history (DLL), round-robin (circular).",
   "code": "class LinkedStack:\n    def __init__(self): self.head = None\n    def push(self, x):\n        n = Node(x); n.next = self.head; self.head = n\n    def pop(self):\n        if self.head is None: return None      # underflow\n        x = self.head.data; self.head = self.head.next; return x\n    def peek(self): return None if self.head is None else self.head.data\n    def is_empty(self): return self.head is None\ns = LinkedStack(); s.push(1); s.push(2); s.push(3)\nprint(s.pop(), s.peek(), s.is_empty())",
   "output": "3 2 False",
-  "scope": false
+  "scope": true
  },
  {
   "n": 144,
   "section": "B4.1 BST, sets, maps",
   "q": "Tree terminology",
   "a": "Tree: hierarchical structure of nodes connected by edges. Node: holds a value. Root: top node, no parent. Parent/child: a parent has an edge to a child. Sibling: same parent. Leaf: node with no children (not always at the bottom). Subtree: a node and all its descendants. Binary tree: each node has at most two children (left and right).",
-  "scope": false
+  "scope": true
  },
  {
   "n": 145,
   "section": "B4.1 BST, sets, maps",
   "q": "The BST property",
   "a": "For any node N: all values in the LEFT subtree are LESS than N; all values in the RIGHT subtree are GREATER than N, recursively for every subtree. Assume no duplicates. Designed for fast search, insert and delete.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 146,
@@ -1193,7 +1193,7 @@ window.B2.flashcards = [
   "q": "BST Node class (code)",
   "a": "__init__ is the constructor; a node stores its value and references to its left and right child.",
   "code": "class Node:\n    def __init__(self, key):\n        self.left = None       # left child\n        self.right = None      # right child\n        self.val = key         # the data",
-  "scope": false
+  "scope": true
  },
  {
   "n": 147,
@@ -1201,7 +1201,7 @@ window.B2.flashcards = [
   "q": "BST insert and search (code)",
   "a": "Search: start at the root; equal = found; smaller go left; larger go right; a null child = not in the tree. Insert: search as if finding it; create the node at the null spot and attach it to its parent.",
   "code": "def insert(root, key):\n    if root is None:                 # empty spot: the new node belongs here\n        return Node(key)\n    if key < root.val:\n        root.left = insert(root.left, key)\n    elif key > root.val:\n        root.right = insert(root.right, key)\n    return root\ndef search(root, key):\n    if root is None:\n        return False\n    if key == root.val:\n        return True\n    if key < root.val:\n        return search(root.left, key)\n    return search(root.right, key)",
-  "scope": false
+  "scope": true
  },
  {
   "n": 148,
@@ -1210,14 +1210,14 @@ window.B2.flashcards = [
   "a": "In-order (L, Visit, R): ascending sorted output. Pre-order (Visit, L, R): copying a tree. Post- order (L, R, Visit): deleting a tree (children before parents). Tip: the name says where the node is visited; always left before right.",
   "code": "def inorder(root):                  # Left, Visit, Right\n    return inorder(root.left) + [root.val] + inorder(root.right) if root else []\ndef preorder(root):                 # Visit, Left, Right\n    return [root.val] + preorder(root.left) + preorder(root.right) if root else []\ndef postorder(root):                # Left, Right, Visit\n    return postorder(root.left) + postorder(root.right) + [root.val] if root else []\nroot = None\nfor k in [15, 10, 20, 8, 12]:\n    root = insert(root, k)\nprint(\"in-order :\", inorder(root))\nprint(\"pre-order :\", preorder(root))\nprint(\"post-order:\", postorder(root))\nprint(search(root, 12), search(root, 99))",
   "output": "in-order : [8, 10, 12, 15, 20]\npre-order : [15, 10, 8, 12, 20]\npost-order: [8, 12, 10, 20, 15]\nTrue False",
-  "scope": false
+  "scope": true
  },
  {
   "n": 149,
   "section": "B4.1 BST, sets, maps",
   "q": "BST deletion: three cases",
   "a": "1. Leaf: remove it (parent's reference = null).\n2. One child: bypass it (connect its parent directly to its child).\n3. Two children: find the in-order successor (smallest value in the right subtree: go right once, then as far left as possible); copy its value into the node; delete the original successor (always a case 1 or 2). The in-order predecessor (largest in the left subtree) also works.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 150,
@@ -1226,21 +1226,21 @@ window.B2.flashcards = [
   "a": "min_node goes left as far as possible.",
   "code": "def min_node(node):\n    while node.left is not None:\n        node = node.left\n    return node\ndef delete(root, key):\n    if root is None:\n        return None\n    if key < root.val:\n        root.left = delete(root.left, key)\n    elif key > root.val:\n        root.right = delete(root.right, key)\n    else:\n        if root.left is None:       # leaf, or one child on the right\n            return root.right\n        if root.right is None:      # one child on the left\n            return root.left\n        successor = min_node(root.right)           # two children\n        root.val = successor.val\n        root.right = delete(root.right, successor.val)\n    return root",
   "output": "insert 50,30,70,20,40,60,80,45\n[20, 30, 40, 45, 50, 60, 70, 80]\ndelete 20 (leaf)   : [30, 40, 45, 50, 60, 70, 80]\ndelete 40 (1 child): [30, 45, 50, 60, 70, 80]\ndelete 50 (2 child): [30, 45, 60, 70, 80]  root = 60",
-  "scope": false
+  "scope": true
  },
  {
   "n": 151,
   "section": "B4.1 BST, sets, maps",
   "q": "BST efficiency: balanced vs degenerate",
   "a": "Balanced BST: search/insert/delete O(log n) (discard half the nodes each step). Unbalanced (a chain, e.g. values inserted in sorted order): O(n). Data is kept sorted and structured. Like binary search, but for a dynamic structure.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 152,
   "section": "B4.1 BST, sets, maps",
   "q": "Set ADT",
   "a": "A collection of items with two rules: unique elements (duplicates ignored) and unordered (no index; my_set[0] is an error). IB book adds: mutable (add/remove), values cannot be updated in place. Good for usernames and very fast membership checks (O(1) average).",
-  "scope": false
+  "scope": true
  },
  {
   "n": 153,
@@ -1249,7 +1249,7 @@ window.B2.flashcards = [
   "a": "An EMPTY set is set(), NOT {} (that is an empty dictionary). set(list) keeps only the unique items.",
   "code": "my_list = [1, 2, 3, 3, 4, 2]\nmy_set = set(my_list)\nprint(sorted(my_set))\nstudent_ids = {101, 102, 105, 108}\nempty = set()\nprint(type(empty), type({}))",
   "output": "[1, 2, 3, 4]\n<class 'set'> <class 'dict'>",
-  "scope": false
+  "scope": true
  },
  {
   "n": 154,
@@ -1258,7 +1258,7 @@ window.B2.flashcards = [
   "a": "remove() raises KeyError if the item is missing: use when a missing item is an error you want to know about. discard() does nothing if missing.",
   "code": "fruits = {'apple', 'banana'}\nfruits.add('orange'); fruits.add('apple')     # existing: no change\nprint(sorted(fruits))\nprint('apple' in fruits, 'grape' in fruits)\nmy_set = {10, 20, 30}\nmy_set.remove(20)\ntry:\n    my_set.remove(99)                          # KeyError\nexcept KeyError as e:\n    print(\"KeyError:\", e)\nmy_set.discard(30)\nmy_set.discard(99)                             # no error\nprint(my_set)",
   "output": "['apple', 'banana', 'orange']\nTrue False\nKeyError: 99\n{10}",
-  "scope": false
+  "scope": true
  },
  {
   "n": 155,
@@ -1267,7 +1267,7 @@ window.B2.flashcards = [
   "a": "union | = in either; intersection & = in both; difference - = in A but not B (order matters: A - B is not B - A).",
   "code": "A = {1, 2, 3}\nB = {3, 4, 5}\nprint(sorted(A | B), sorted(A.union(B)))\nprint(sorted(A & B), sorted(A.intersection(B)))\nprint(sorted(A - B), sorted(A.difference(B)))\nprint(sorted(B - A))",
   "output": "[1, 2, 3, 4, 5] [1, 2, 3, 4, 5]\n[3] [3]\n[1, 2] [1, 2]\n[4, 5]",
-  "scope": false
+  "scope": true
  },
  {
   "n": 156,
@@ -1276,7 +1276,7 @@ window.B2.flashcards = [
   "a": "<= subset, < proper subset, >= superset, > proper superset. {1,2} is a subset of {1,2} but NOT a proper subset (identical).",
   "code": "A = {1, 2}; B = {1, 2, 3}; C = {1, 2}\nprint(A <= B, A < B, A <= C, A < C, A.issubset(B))\nprint(B >= A, B > A, B.issuperset(A))",
   "output": "True True True False True\nTrue True True",
-  "scope": false
+  "scope": true
  },
  {
   "n": 157,
@@ -1285,7 +1285,7 @@ window.B2.flashcards = [
   "a": "Both = intersection; at least one = union; ONLY in one = difference.",
   "code": "chess_club = {'Alice', 'Bob', 'Charlie'}\ndebate_club = {'Charlie', 'David', 'Eve'}\nprint(sorted(chess_club | debate_club))   # in at least one club\nprint(sorted(chess_club & debate_club))   # in both\nprint(sorted(chess_club - debate_club))   # only in chess\nguest = {'read_articles', 'view_comments'}\neditor = {'read_articles', 'write_articles', 'edit_articles', 'delete_comments'}\nadmin = editor | {'delete_articles', 'ban_users'}\nprint(sorted(editor & guest))\nprint(sorted(admin - editor))\nprint(guest <= editor)",
   "output": "['Alice', 'Bob', 'Charlie', 'David', 'Eve']\n['Charlie']\n['Alice', 'Bob']\n['read_articles']\n['ban_users', 'delete_articles']\nFalse",
-  "scope": false
+  "scope": true
  },
  {
   "n": 158,
@@ -1314,6 +1314,6 @@ window.B2.flashcards = [
   "section": "B4.1 BST, sets, maps",
   "q": "Quick reference: ADT complexities",
   "a": "Singly linked list: search O(n); insert O(1) head, O(n) end; delete O(1) head.\nDoubly linked list: insert O(1) head or tail; delete O(1) at a known node.\nBST balanced: O(log n); degenerate: O(n); kept sorted by key.\nSet / Map: O(1) average search, insert, delete; no order.",
-  "scope": false
+  "scope": true
  }
 ];
