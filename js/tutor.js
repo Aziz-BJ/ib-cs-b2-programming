@@ -3,10 +3,19 @@
 window.Tutor = (() => {
   const KEY = 'b2-tutor';
   const DEFAULT_MODEL = 'deepseek/deepseek-v4.1-flash';
+  // Built-in tutor: a Vercel function (api/tutor.js) that holds the site's key.
+  // On the Vercel deployment it's same-origin; elsewhere (GitHub Pages, local) call it by URL.
+  // A personal key saved in settings takes priority over it.
+  const VERCEL_ORIGIN = '';
+  const PROXY_URL = location.hostname.endsWith('.vercel.app') ? '/api/tutor'
+    : VERCEL_ORIGIN ? `${VERCEL_ORIGIN}/api/tutor` : '';
+  const hasProxy = () => !!PROXY_URL;
+  const viaProxy = () => !cfg.key && hasProxy();
+  const ready = () => !!cfg.key || hasProxy();
   const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
   let cfg = load();
   const save = () => localStorage.setItem(KEY, JSON.stringify(cfg));
-  const model = () => cfg.model || DEFAULT_MODEL;
+  const model = () => (viaProxy() ? DEFAULT_MODEL : cfg.model || DEFAULT_MODEL);
 
   const SYSTEM = `You are a concise IB Computer Science tutor inside a Python exam-practice website for a student with an exam in a few days.
 Rules:
@@ -73,19 +82,21 @@ Rules:
 
   // ---------- API ----------
   async function stream(messages, onDelta, signal) {
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const proxied = viaProxy();
+    const res = await fetch(proxied ? PROXY_URL : 'https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       signal,
-      headers: {
+      headers: proxied ? { 'Content-Type': 'application/json' } : {
         Authorization: `Bearer ${cfg.key}`,
         'Content-Type': 'application/json',
         'X-Title': 'B2 Programming study',
       },
-      body: JSON.stringify({ model: model(), messages, stream: true, max_tokens: 350, temperature: 0.3 }),
+      body: JSON.stringify(proxied ? { messages } : { model: model(), messages, stream: true, max_tokens: 350, temperature: 0.3 }),
     });
     if (!res.ok) {
       let msg = '';
       try { msg = (await res.json()).error?.message || ''; } catch {}
+      if (proxied) throw new Error(msg || `The tutor is unavailable right now (error ${res.status}).`);
       const friendly = {
         401: 'OpenRouter rejected the API key. Check it in Tutor settings.',
         402: 'Your OpenRouter account is out of credit.',
@@ -128,7 +139,9 @@ Rules:
     const status = h('div', { class: 'muted small', style: 'min-height:18px' });
     dialog = h('dialog', { class: 'tt-dialog' },
       h('h3', { style: 'margin:0 0 4px' }, 'AI tutor'),
-      h('p', { class: 'muted small', style: 'margin:0 0 16px' }, 'Paste your OpenRouter API key. It\'s stored only in this browser and sent only to openrouter.ai. ',
+      h('p', { class: 'muted small', style: 'margin:0 0 16px' },
+        hasProxy() ? 'The tutor works out of the box. Optional: use your own OpenRouter key and model instead. Your key is stored only in this browser and sent only to openrouter.ai. '
+                   : 'Paste your OpenRouter API key. It\'s stored only in this browser and sent only to openrouter.ai. ',
         h('a', { href: 'https://openrouter.ai/keys', target: '_blank', rel: 'noopener' }, 'Get a key')),
       h('label', { class: 'tt-label' }, 'API key', keyIn),
       h('label', { class: 'tt-label' }, 'Model', modelIn),
@@ -139,7 +152,7 @@ Rules:
         h('button', { class: 'btn', onclick: () => dialog.close() }, 'Cancel'),
         h('button', { class: 'btn primary', onclick: () => {
           const k = keyIn.value.trim();
-          if (!k) { status.textContent = 'Paste a key first.'; return; }
+          if (!k) { status.textContent = hasProxy() ? 'Paste a key, or Cancel to keep using the built-in tutor.' : 'Paste a key first.'; return; }
           cfg.key = k;
           cfg.model = modelIn.value.trim() || DEFAULT_MODEL;
           save();
@@ -184,7 +197,7 @@ Rules:
     function draw() {
       if (!panel) return;
       panel.replaceChildren();
-      if (!cfg.key) {
+      if (!ready()) {
         panel.append(h('div', { class: 'tt-setup' },
           h('span', null, 'Add your OpenRouter API key to use the tutor.'),
           h('button', { class: 'btn primary', onclick: () => openSettings() }, 'Add key')));
@@ -251,5 +264,5 @@ Rules:
     }
   }
 
-  return { attach, openSettings, get hasKey() { return !!cfg.key; } };
+  return { attach, openSettings, get hasKey() { return ready(); } };
 })();

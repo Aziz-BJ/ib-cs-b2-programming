@@ -52,7 +52,7 @@
             h('span', { class: 'nav-code' }, t.code), h('span', { class: 'nav-title' }, t.title), ring(topicProgress(t).frac));
         }))),
       h('div', { class: 'sidebar-foot' }, pyDot = h('span', { class: `dot ${Py.status}` }), pyLabel = h('span', null, statusText(Py.status)), h('span', { class: 'spacer' }),
-        h('button', { class: 'tt-link', onclick: () => Tutor.openSettings(() => renderSidebar()), title: 'AI tutor settings' }, Tutor.hasKey ? '✦ Tutor on' : '✦ Set up tutor')));
+        h('button', { class: 'tt-link', onclick: () => Tutor.openSettings(() => renderSidebar()), title: 'AI tutor settings' }, Tutor.hasKey ? '✦ Tutor' : '✦ Set up tutor')));
   }
   let pyDot, pyLabel;
   const statusText = s => ({ loading: 'Python is starting…', ready: 'Python ready', error: 'Python failed to load (offline?)' }[s]);
