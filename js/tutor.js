@@ -14,6 +14,8 @@ window.Tutor = (() => {
   const ready = () => !!cfg.key || hasProxy();
   const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
   let cfg = load();
+  // Older versions saved the then-default model with the key; drop it so the current default applies.
+  if (cfg.model === 'anthropic/claude-haiku-5.5') { delete cfg.model; localStorage.setItem(KEY, JSON.stringify(cfg)); }
   const save = () => localStorage.setItem(KEY, JSON.stringify(cfg));
   const model = () => (viaProxy() ? DEFAULT_MODEL : cfg.model || DEFAULT_MODEL);
 
@@ -154,7 +156,8 @@ Rules:
           const k = keyIn.value.trim();
           if (!k) { status.textContent = hasProxy() ? 'Paste a key, or Cancel to keep using the built-in tutor.' : 'Paste a key first.'; return; }
           cfg.key = k;
-          cfg.model = modelIn.value.trim() || DEFAULT_MODEL;
+          const m = modelIn.value.trim();
+          if (m && m !== DEFAULT_MODEL) cfg.model = m; else delete cfg.model;
           save();
           dialog.close();
           refreshAll();
