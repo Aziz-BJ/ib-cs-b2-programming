@@ -535,3 +535,32 @@ kbd { font: 500 12px/1 var(--mono); padding: 2px 6px; border-radius: 5px; backgr
 .fc-out { background: var(--fc-out); border-left: 3px solid var(--fc-blue); margin-top: 6px; }
 .fc-stage { min-height: 120px; }
 .fc-stage .fc { box-shadow: var(--shadow-lg); border-radius: 14px; }
+
+/* ---------- code structure breakdown ---------- */
+.btn.on { background: var(--accent-soft); color: var(--accent); }
+.struct { margin-top: 12px; border-radius: 12px; background: var(--sunken); box-shadow: 0 0 0 1px var(--line); overflow: hidden; animation: enter 260ms var(--ease) both; }
+.struct-head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; padding: 12px 14px 8px; }
+.struct-head .c-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); }
+.struct-flow { font-size: 13px; color: var(--text-2); }
+.struct-rows { display: grid; }
+.struct-row { display: grid; grid-template-columns: minmax(200px, 44%) 1fr; gap: 14px; align-items: baseline; padding: 5px 14px; border-top: 1px solid var(--line); }
+.struct-code { background: none; padding: 0; font: 13px/1.5 var(--mono); white-space: pre; overflow-x: auto; color: var(--text); }
+.struct-role { font-size: 13px; color: var(--text-2); line-height: 1.4; }
+.struct-role b { font-weight: 650; }
+.struct-row.k-header .struct-role b { color: var(--tok-def); }
+.struct-row.k-init .struct-role b, .struct-row.k-input .struct-role b { color: var(--good); }
+.struct-row.k-loop .struct-role b { color: var(--tok-kw); }
+.struct-row.k-decide .struct-role b { color: var(--warn); }
+.struct-row.k-update .struct-role b { color: var(--accent); }
+.struct-row.k-ret .struct-role b, .struct-row.k-out .struct-role b, .struct-row.k-after .struct-role b { color: var(--bad); }
+.struct-foot { padding: 8px 14px 12px; border-top: 1px solid var(--line); }
+@media (max-width: 700px) { .struct-row { grid-template-columns: 1fr; gap: 2px; } }
+.pattern { margin-bottom: 8px; }
+.pattern-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-top: 32px; }
+.pattern-head h3 { margin: 0; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pair .runner { margin-top: 6px; }
+.pair-label { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.pair-label.bad { color: var(--bad); }
+.pair-label.good { color: var(--good); }
+@media (max-width: 900px) { .pair { grid-template-columns: 1fr; } }

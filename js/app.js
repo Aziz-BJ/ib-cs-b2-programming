@@ -41,6 +41,7 @@
     sidebar.replaceChildren(
       h('a', { class: 'brand', href: '#/' }, h('span', { class: 'brand-mark' }, 'B2'), h('span', null, h('div', { class: 'brand-name' }, 'Programming'), h('div', { class: 'brand-sub' }, 'IB CS · exam prep'))),
       navItem('#/', icon('⌂'), 'Overview'),
+      navItem('#/structure', icon('⌗'), 'How to structure code'),
       navItem('#/paper', icon('✎'), 'Practice paper'),
       navItem('#/cards', icon('❏'), 'Flashcards'),
       navItem('#/review', icon('↺'), 'Mistakes to redo', reviewCount() ? h('span', { class: 'muted small' }, String(reviewCount())) : null),
@@ -85,7 +86,7 @@
     p.append(
       h('div', { class: 'eyebrow' }, 'IB Computer Science · B2 Programming'),
       h('h1', null, 'Learn to code it, not just read it.'),
-      h('p', { class: 'lede' }, 'Everything on your exam, from data types to binary search. Read a short lesson, run the examples, then answer IB-style questions that check your code for you.'),
+      h('p', { class: 'lede' }, 'Everything on your exam, from data types to bubble sort. Read a short lesson, run the examples, then answer IB-style questions that check your code for you.'),
       h('div', { class: 'card hero-card' }, big,
         h('div', null,
           h('div', { style: 'font-weight:600;font-size:17px' }, `${o.score} of ${o.max} marks earned`),
@@ -105,7 +106,7 @@
             h('span', { class: 'meta' }, tp.done ? `${tp.score}/${tp.max}` : `${t.minutes || 20} min`),
             ring(tp.frac, 22, 3));
         })))),
-      h('p', { class: 'muted small', style: 'margin-top:40px' }, 'Not on this exam: bubble sort, selection sort, recursion and file processing. Your progress is saved in this browser. ',
+      h('p', { class: 'muted small', style: 'margin-top:40px' }, 'Not on this exam: recursion and file processing. Your progress is saved in this browser. ',
         h('a', { href: '#/', onclick: e => { e.preventDefault(); if (confirm('Clear all your saved progress and answers?')) { Store.reset(); route(); } } }, 'Reset progress')));
   }
   const tile = (href, icon, title, sub) => h('a', { class: 'tile', href }, h('span', { class: 't-icon' }, icon), h('span', { class: 't-title' }, title), h('span', { class: 't-sub' }, sub));
@@ -367,6 +368,46 @@
   let cardKeys = null;
   document.addEventListener('keydown', e => cardKeys && cardKeys(e));
 
+  // ---------- how to structure code ----------
+  function viewStructure() {
+    const P = window.B2.patterns;
+    const p = page();
+    p.append(h('div', { class: 'eyebrow' }, 'Exam technique'), h('h1', null, 'How to structure code'),
+      h('p', { class: 'lede' }, 'Almost every Construct answer is the same six blocks in the same order. Get the shape right and most of the marks follow.'));
+    p.append(h('div', { class: 'table-wrap' }, h('table', { class: 't' },
+      h('thead', null, h('tr', null, h('th', null, 'Block'), h('th', null, 'What goes there'))),
+      h('tbody', null, P.blocks.map(([b, d], i) => h('tr', null, h('td', null, h('b', null, `${i + 1}. ${b}`)), h('td', { html: d })))))));
+    p.append(h('h3', null, 'All six in one answer'),
+      h('p', { class: 'muted' }, 'Each comment names the block. Run it, then try moving a line to see what breaks.'),
+      makeRunner(P.example, { label: 'Try it: edit and run' }).el);
+
+    p.append(h('h2', null, 'The standard patterns'),
+      h('p', { class: 'muted' }, 'Most exam questions are one of these, or two of them combined. Learn the shape, then swap in the names from the question.'));
+    for (const pat of P.patterns) {
+      const structBox = h('div');
+      const btn = h('button', { class: 'btn ghost', onclick: () => {
+        const open = !!structBox.firstChild;
+        structBox.replaceChildren(...(open ? [] : [Structure.render(/\bdef /.test(pat.code) ? pat.code.replace(/\n\n(?!def |\s)[\s\S]*$/, '') : pat.code)]));
+        btn.textContent = open ? 'Show structure' : 'Hide structure';
+      } }, 'Show structure');
+      p.append(h('div', { class: 'pattern' },
+        h('div', { class: 'pattern-head' }, h('h3', null, pat.title), h('span', { class: 'muted small' }, pat.when)),
+        makeRunner(pat.code, { label: 'Pattern', stdin: pat.stdin || '' }).el,
+        h('div', { class: 'btn-row', style: 'margin-top:-10px' }, btn), structBox));
+    }
+
+    p.append(h('h2', null, 'Structure mistakes that lose marks'));
+    for (const m of P.mistakes) {
+      p.append(h('h3', null, m.title), h('div', { class: 'pair' },
+        h('div', null, h('div', { class: 'pair-label bad' }, '✕ Wrong'), makeRunner(m.wrong, { label: 'Run to see the bug' }).el),
+        h('div', null, h('div', { class: 'pair-label good' }, '✓ Right'), makeRunner(m.right, { label: 'Fixed' }).el)));
+    }
+
+    p.append(h('div', { class: 'must' }, h('h3', null, 'Before you submit a Construct answer'),
+      h('ul', null, P.checklist.map(c => h('li', { html: c })))));
+    p.append(h('p', { class: 'muted small', style: 'margin-top:20px' }, 'On any Construct question, press ', h('b', null, 'Structure'), ' to see the shape of a full-mark answer for that question.'));
+  }
+
   // ---------- review ----------
   function viewReview() {
     const p = page();
@@ -400,6 +441,7 @@
     else if (parts[0] === 'paper') viewPaper();
     else if (parts[0] === 'cards') viewCards();
     else if (parts[0] === 'review') viewReview();
+    else if (parts[0] === 'structure') viewStructure();
     else viewHome();
     renderSidebar();
     const t = parts[0] === 't' && byId[parts[1]];

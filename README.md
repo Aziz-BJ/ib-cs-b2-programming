@@ -1,6 +1,6 @@
 # B2 Programming: exam prep
 
-An interactive study site for IB Computer Science B2.1.1 to B2.4.2 (data types through binary search). Bubble sort, selection sort, recursion and file processing are not covered.
+An interactive study site for IB Computer Science B2.1.1 to B2.4.3 (data types through bubble and selection sort). Recursion and file processing are not covered.
 
 **Open it: https://aziz-bj.github.io/ib-cs-b2-programming/**  (nothing to install)
 
@@ -18,7 +18,7 @@ Python runs in your browser (Pyodide). The first load downloads it, about 10 MB,
   - *State the output* and *trace table* questions are checked cell by cell.
   - *Describe* and *explain* questions show the markscheme so you can tick the points you made.
 - **Practice paper**: a timed, mixed paper. It picks questions you got wrong more often.
-- **Flashcards**: 161 cards (100 for this exam), each with an answer and, for code cards, the program and its output. Study mode reveals one card at a time; Browse lists them all.
+- **Flashcards**: 161 cards (108 for this exam), each with an answer and, for code cards, the program and its output. Study mode reveals one card at a time; Browse lists them all.
 - **Mistakes to redo**: every question where you dropped marks.
 
 - **AI tutor (optional)**: press **✦ Ask** on any question to get short explanations and hints. Set it up once with **✦ Set up tutor** at the bottom of the sidebar: paste an OpenRouter key from https://openrouter.ai/keys. The key stays in your browser's storage and is sent only to OpenRouter. The default model is `deepseek/deepseek-v4.1-flash`, and you can change it in the same dialog.

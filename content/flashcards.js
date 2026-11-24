@@ -842,7 +842,7 @@ window.B2.flashcards = [
   "a": "Compare neighbouring items and swap them if in the wrong order. Each pass puts the next biggest item in its final place at the end. Repeat until a pass makes no swap. The swap needs temp: without it the first line overwrites items[j].",
   "code": "items = [14, 3, 9, 1, 7]\nj = 0\nbroken = items[:]\nbroken[j] = broken[j + 1]\nbroken[j + 1] = broken[j]\nprint(broken)                 # no temp\ntemp = items[j]\nitems[j] = items[j + 1]\nitems[j + 1] = temp\nprint(items)                  # with temp",
   "output": "[3, 3, 9, 1, 7]\n[3, 14, 9, 1, 7]",
-  "scope": false
+  "scope": true
  },
  {
   "n": 102,
@@ -851,7 +851,7 @@ window.B2.flashcards = [
   "a": "Improvement 1: range(n - 1 - passes) stops before items already in place. Improvement 2: a swapped flag stops when a pass makes no swap. Descending sort: flip the comparison to <. Parallel lists: swap the matching items at the same time.",
   "code": "def bubble_sort(items):\n    n = len(items)\n    passes = 0\n    swapped = True\n    while swapped:\n        swapped = False\n        for j in range(n - 1 - passes):\n            if items[j] > items[j + 1]:\n                temp = items[j]\n                items[j] = items[j + 1]\n                items[j + 1] = temp\n                swapped = True\n        passes = passes + 1\ndata = [14, 3, 9, 1, 7]\nbubble_sort(data)\nprint(data)\nnames = [\"Mocha\", \"Latte\", \"Chai\", \"Americano\", \"Flat white\", \"Cortado\"]\nbubble_sort(names)\nprint(names)",
   "output": "[1, 3, 7, 9, 14]\n['Americano', 'Chai', 'Cortado', 'Flat white', 'Latte', 'Mocha']",
-  "scope": false
+  "scope": true
  },
  {
   "n": 103,
@@ -859,28 +859,28 @@ window.B2.flashcards = [
   "q": "Bubble sort: basic and shorter versions (code)",
   "a": "Basic: (n-1)² comparisons even if sorted. Shorter: 4+3+2+1 = n(n-1)/2, never stops early.",
   "code": "def bubble_sort_basic(items):\n    n = len(items)\n    for i in range(n - 1):\n        for j in range(n - 1):\n            if items[j] > items[j + 1]:\n                temp = items[j]\n                items[j] = items[j + 1]\n                items[j + 1] = temp\ndef bubble_sort_shorter(items):      # Improvement 1\n    n = len(items)\n    for i in range(n - 1):\n        for j in range(n - 1 - i):\n            if items[j] > items[j + 1]:\n                temp = items[j]\n                items[j] = items[j + 1]\n                items[j + 1] = temp",
-  "scope": false
+  "scope": true
  },
  {
   "n": 104,
   "section": "B2.4 Algorithms",
   "q": "Bubble sort: comparisons for n = 10",
   "a": "Version | sorted | reversed\nBasic | 81 | 81\nShorter | 45 | 45\nFlag | 9 | 90\nBoth | 9 | 45\nOnly the flag stops early on sorted data (n - 1 comparisons). Only the shorter loop saves work on reversed data (n(n-1)/2).",
-  "scope": false
+  "scope": true
  },
  {
   "n": 105,
   "section": "B2.4 Algorithms",
   "q": "Bubble sort worked trace [14, 3, 9, 1, 7]",
   "a": "Pass 1: 14>3 swap, 14>9 swap, 14>1 swap, 14>7 swap -> [3, 9, 1, 7, 14] (14 in place). Pass 2: 3 compared, 2 swapped -> [3, 1, 7, 9, 14].\nPass 3: 2 compared, 1 swapped -> [1, 3, 7, 9, 14].\nPass 4: 1 compared, 0 swapped -> stop.\nTotal: 10 comparisons, 7 swaps.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 106,
   "section": "B2.4 Algorithms",
   "q": "Bubble sort: complexity, advantages and disadvantages",
   "a": "Best: already sorted, one pass with the flag, O(n). Average and worst (reversed): O(n²). Space O(1): sorts in place with one temp.\nAdvantages: simple to write and trace; in place; fast on nearly sorted data with the flag; stable (equal items keep order).\nDisadvantages: O(n²) on random/reversed data (doubling n quadruples time); many swaps; not scalable (merge sort is O(n log n)).",
-  "scope": false
+  "scope": true
  },
  {
   "n": 107,
@@ -889,14 +889,14 @@ window.B2.flashcards = [
   "a": "List = sorted part + unsorted part. Scan the unsorted part for the smallest item and swap it into the first unsorted position. ONE swap per pass. Always O(n²) (best case too), space O(1). Fewer swaps can be faster where writes are costly.",
   "code": "for i in range(n - 1):\n    m = i\n    for j in range(i + 1, n):\n        if a[j] < a[m]:\n            m = j\n    a[m], a[i] = a[i], a[m]",
   "output": "[14, 3, 9, 1, 7] -> 1 3 9 14 7 -> 1 3 9 14 7 -> 1 3 7 14 9 -> 1 3 7 9 14",
-  "scope": false
+  "scope": true
  },
  {
   "n": 108,
   "section": "B2.4 Algorithms",
   "q": "Bubble vs selection sort",
   "a": "Bubble: compare neighbours; many swaps; best case O(n) if optimised; worst O(n²); space O(1).\nSelection: find the minimum; one swap per pass; always O(n²); space O(1).\nSame Big O does not mean same speed.",
-  "scope": false
+  "scope": true
  },
  {
   "n": 109,

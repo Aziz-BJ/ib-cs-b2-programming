@@ -357,6 +357,12 @@ const RENDER = {
     const runner = makeRunner(ex.starter, { storeKey: `code:${key}`, label: 'Your code', showStdin: usesStdin || /input\s*\(/.test(ex.starter), stdin: (ex.tests.find(t => t.stdin) || {}).stdin || '' });
     body.append(runner.el);
     const hintBox = h('div');
+    const structBox = h('div');
+    const structBtn = h('button', { class: 'btn', title: 'Show the shape of a full-mark answer without the answer itself', onclick: () => {
+      const open = !!structBox.firstChild;
+      structBox.replaceChildren(...(open ? [] : [Structure.render(ex.solution)]));
+      structBtn.classList.toggle('on', !open);
+    } }, 'Structure');
     let hintsShown = 0;
     const extra = h('div');
     const check = async () => {
@@ -399,7 +405,7 @@ const RENDER = {
         makeRunner(ex.solution, { label: 'Model solution', showStdin: usesStdin, stdin: (ex.tests.find(t => t.stdin) || {}).stdin || '' }).el,
         markschemeList(ex.markscheme)));
     } }, 'Show solution');
-    body.append(h('div', { class: 'btn-row ex-actions' }, checkBtn, hintBtn, h('span', { class: 'spacer' }), solBtn), hintBox, extra);
+    body.append(h('div', { class: 'btn-row ex-actions' }, checkBtn, structBtn, hintBtn, h('span', { class: 'spacer' }), solBtn), structBox, hintBox, extra);
   },
 
   written({ ex, key, body, feedback, record }) {
